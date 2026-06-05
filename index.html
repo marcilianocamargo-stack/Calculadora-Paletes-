@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chapas por Palete</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #111;
+    --surface: #1a1a1a;
+    --border:  #2c2c2c;
+    --accent:  #f0e040;
+    --orange:  #ff9922;
+    --green:   #22dd88;
+    --blue:    #44aaff;
+    --red:     #ff5533;
+    --purple:  #cc88ff;
+    --text:    #efefef;
+    --muted:   #555;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding: 14px 14px 32px; }
+
+  .header { width: 100%; max-width: 420px; display: flex; align-items: baseline; gap: 10px; padding-bottom: 10px; border-bottom: 2px solid var(--accent); margin-bottom: 14px; }
+  .header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--accent); letter-spacing: 3px; line-height: 1; }
+  .header p  { font-size: 10px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+
+  .tabs { width: 100%; max-width: 420px; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border); margin-bottom: 14px; }
+  .tab { background: var(--surface); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 9px 0; text-align: center; cursor: pointer; border: none; }
+  .tab.tc { background: #1c1c00; color: var(--accent);  border-bottom: 2px solid var(--accent); }
+  .tab.tp { background: #0a1a2a; color: var(--blue);    border-bottom: 2px solid var(--blue); }
+
+  .fields { width: 100%; max-width: 420px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .field { background: var(--surface); border: 2px solid var(--border); border-radius: 2px; padding: 10px 12px; cursor: pointer; min-height: 72px; display: flex; flex-direction: column; justify-content: space-between; }
+  .am { border-color: var(--orange); background: #1f1600; }
+  .ac { border-color: var(--accent);  background: #1c1c00; }
+  .ap { border-color: var(--blue);    background: #0a1020; }
+  .field-label { font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+  .fv { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; letter-spacing: 1px; word-break: break-all; }
+  .cursor { display: inline-block; width: 3px; height: 32px; background: currentColor; vertical-align: middle; margin-left: 2px; animation: blink .7s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .atalhos { width: 100%; max-width: 420px; display: flex; gap: 6px; margin-bottom: 10px; }
+  .atalho { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 13px; padding: 7px 0; cursor: pointer; letter-spacing: 1px; text-align: center; }
+  .atalho.sel { border-color: var(--orange); color: var(--orange); background: #1f1400; }
+
+  .strip { width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--green); padding: 8px 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .sl { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; line-height: 1.6; }
+  .sv { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--green); }
+
+  .sec-label { width: 100%; max-width: 420px; font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .pgrid { width: 100%; max-width: 420px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 10px; }
+  .bp { background: #0d1e30; border: 2px solid #1a3050; color: var(--blue); font-family: 'Bebas Neue', sans-serif; font-size: 24px; height: 48px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .bp.sel { background: #0a2a50; border-color: var(--blue); color: #fff; }
+
+  .tbox { width: 100%; max-width: 420px; background: var(--surface); border: 2px solid var(--blue); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .tl { font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; line-height: 1.8; }
+  .tf { color: #666; font-size: 10px; letter-spacing: 1px; }
+  .tv { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--blue); line-height: 1; }
+  .tu { font-size: 10px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; text-align: right; margin-top: 2px; }
+
+  .aviso { width: 100%; max-width: 420px; background: #0a1020; border: 1px solid #1a3050; border-left: 4px solid var(--blue); padding: 10px 14px; margin-bottom: 10px; font-size: 10px; color: #6699cc; letter-spacing: 1px; line-height: 1.6; }
+  .bchips { width: 100%; max-width: 420px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); padding: 7px 10px; text-align: center; }
+  .chl { font-size: 8px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .chv { font-family: 'Bebas Neue', sans-serif; font-size: 22px; }
+
+  .sep { width: 100%; max-width: 420px; font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .plista { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .pr { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border); padding: 9px 12px; display: grid; grid-template-columns: 32px 1fr 1fr 80px; align-items: center; gap: 8px; }
+  .pr.ok  { border-left-color: var(--green); }
+  .pr.ult { border-left-color: var(--purple); background: #140a20; border-color: #2a1540; }
+  .pnum { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--muted); text-align: center; }
+  .pr.ult .pnum { color: var(--purple); }
+  .pcv { font-family: 'Bebas Neue', sans-serif; font-size: 26px; line-height: 1; }
+  .pcl { font-size: 8px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .bw { display: flex; flex-direction: column; gap: 3px; }
+  .bb { height: 6px; background: #222; border-radius: 1px; overflow: hidden; }
+  .bf { height: 100%; border-radius: 1px; }
+  .bf.vd { background: var(--green); }
+  .bf.rx { background: var(--purple); }
+  .bt { font-family: 'Bebas Neue', sans-serif; font-size: 9px; color: var(--muted); }
+  .av { font-family: 'Bebas Neue', sans-serif; font-size: 24px; line-height: 1; text-align: right; }
+  .av.vd { color: var(--green); }
+  .av.rx { color: var(--purple); }
+  .au { font-size: 9px; color: var(--muted); text-align: right; }
+
+  .rbox { width: 100%; max-width: 420px; background: #100a20; border: 2px solid var(--purple); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .rl { font-size: 9px; color: #8866aa; letter-spacing: 3px; text-transform: uppercase; line-height: 1.8; }
+  .rs { font-size: 10px; color: #553388; }
+  .rv { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--purple); line-height: 1; }
+  .ru { font-size: 10px; color: #553388; letter-spacing: 2px; text-transform: uppercase; text-align: right; margin-top: 2px; }
+
+  .teclado { width: 100%; max-width: 420px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .k { background: #222; border: 1px solid #333; color: var(--text); font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; height: 64px; cursor: pointer; border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+  .k:active { background: #333; transform: scale(0.93); }
+  .kdel   { color: var(--red); font-size: 18px; }
+  .kclr   { background: #1e0a00; border-color: var(--red);   color: var(--red);   font-size: 13px; }
+  .kok    { background: #001a10; border-color: var(--green); color: var(--green); font-size: 14px; }
+  .kdot   { font-size: 28px; color: var(--muted); }
+  .kzero  { grid-column: span 2; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header"><h1>CHAPAS</h1><p>por palete</p></div>
+
+<div class="tabs">
+  <button class="tab tc" id="tab-calc"   onclick="setTab('calc')">CALCULADORA</button>
+  <button class="tab"    id="tab-pedido" onclick="setTab('pedido')">PEDIDO</button>
+</div>
+
+<!-- ABA CALC -->
+<div id="vc">
+  <div class="fields">
+    <div class="field am" id="fm" onclick="setFoco('mult')">
+      <div class="field-label">múltiplo</div>
+      <div class="fv" id="vm" style="color:var(--orange)"><span class="cursor"></span></div>
+    </div>
+    <div class="field" id="fc" onclick="setFoco('cm')">
+      <div class="field-label">medida (cm)</div>
+      <div class="fv" id="vc2" style="color:var(--muted)">—</div>
+    </div>
+  </div>
+  <div class="atalhos">
+    <button class="atalho" id="a16" onclick="setAtalho(16)">×16</button>
+    <button class="atalho" id="a26" onclick="setAtalho(26)">×26</button>
+    <button class="atalho" id="a33" onclick="setAtalho(33)">×33</button>
+  </div>
+  <div class="strip">
+    <div><div class="sl">chapas / fileira</div><div class="sl" id="rformula">cm ÷ 10 × múltiplo</div></div>
+    <div class="sv" id="rfil">—</div>
+  </div>
+  <div class="sec-label">pilhas por palete</div>
+  <div class="pgrid" id="pgrid"></div>
+  <div class="tbox">
+    <div><div class="tl">total por palete</div><div class="tf" id="tformula">—</div></div>
+    <div><div class="tv" id="tval">—</div><div class="tu">chapas</div></div>
+  </div>
+</div>
+
+<!-- ABA PEDIDO -->
+<div id="vp" class="hidden">
+  <div class="aviso" id="aviso">Configure <b>múltiplo</b>, <b>medida</b> e <b>pilhas</b> na aba Calculadora primeiro.</div>
+  <div class="bchips hidden" id="bchips">
+    <div class="chip"><div class="chl">múltiplo</div><div class="chv" id="cimult" style="color:var(--orange)">—</div></div>
+    <div class="chip"><div class="chl">pilhas</div>  <div class="chv" id="cipilhas" style="color:var(--blue)">—</div></div>
+    <div class="chip"><div class="chl">ch/palete</div><div class="chv" id="citotal" style="color:var(--green)">—</div></div>
+  </div>
+  <div class="fields">
+    <div class="field ap" style="grid-column:span 2" id="fp" onclick="setFoco('ped')">
+      <div class="field-label">quantidade do pedido (chapas)</div>
+      <div class="fv" id="vped" style="color:var(--blue)"><span class="cursor" style="color:var(--blue)"></span></div>
+    </div>
+  </div>
+  <div class="sep hidden" id="sepdist">distribuição</div>
+  <div class="plista" id="plista"></div>
+  <div class="rbox hidden" id="rbox">
+    <div><div class="rl">total de paletes</div><div class="rs" id="rsub">—</div></div>
+    <div><div class="rv" id="rval">—</div><div class="ru">paletes</div></div>
+  </div>
+</div>
+
+<!-- TECLADO -->
+<div class="teclado">
+  <div class="k" onclick="inp('7')">7</div><div class="k" onclick="inp('8')">8</div><div class="k" onclick="inp('9')">9</div>
+  <div class="k" onclick="inp('4')">4</div><div class="k" onclick="inp('5')">5</div><div class="k" onclick="inp('6')">6</div>
+  <div class="k" onclick="inp('1')">1</div><div class="k" onclick="inp('2')">2</div><div class="k" onclick="inp('3')">3</div>
+  <div class="k kdot" onclick="inp('.')">·</div>
+  <div class="k kzero" onclick="inp('0')">0</div>
+  <div class="k kdel"  onclick="del()">⌫</div>
+  <div class="k kclr"  onclick="limpar()">LIMPAR</div>
+  <div class="k kok"   onclick="avancar()">OK ▶</div>
+</div>
+
+<script>
+// ESTADO
+var tab    = 'calc';
+var foco   = 'mult';
+var sMult  = '';
+var sCm    = '';
+var sPed   = '';
+var pilhas = null;
+
+// ALTURA — fórmula central
+// Espessuras calibradas com trena (1 pilha):
+// ×33 Onda B  → 412.5 chapas = 125 cm
+// ×26 Onda C  → 325   chapas = 125 cm
+// ×16 Onda BC → 200   chapas = 125 cm
+// altura_cm = (chapas / ref) * 125 / num_pilhas
+function calcAltura(chapas, multInt, numPilhas) {
+  var ref;
+  if      (multInt === 33) { ref = 412.5; }
+  else if (multInt === 26) { ref = 325;   }
+  else if (multInt === 16) { ref = 200;   }
+  else                     { return null; }
+  if (!numPilhas || numPilhas <= 0) { return null; }
+  if (!chapas    || chapas    <= 0) { return null; }
+  return (chapas / ref) * 125 / numPilhas;
+}
+
+function temRef(m) { return m === 33 || m === 26 || m === 16; }
+
+function fmtAlt(cm) {
+  if (cm === null || cm === undefined) { return '—'; }
+  if (cm >= 100) { return (cm / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' m'; }
+  return cm.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' cm';
+}
+
+// LOCALSTORAGE
+var VKEY = 'chapas_v4';
+function salvar() {
+  try { localStorage.setItem(VKEY, JSON.stringify({ m: sMult, c: sCm, p: pilhas })); } catch(e) {}
+}
+function carregar() {
+  try {
+    var raw = localStorage.getItem(VKEY);
+    if (!raw) { return; }
+    var d = JSON.parse(raw);
+    if (typeof d.m === 'string' && d.m) { sMult  = d.m; }
+    if (typeof d.c === 'string' && d.c) { sCm    = d.c; }
+    if (typeof d.p === 'number' && d.p) { pilhas = d.p; }
+  } catch(e) {}
+}
+
+// BOTÕES PILHAS
+var pg2 = document.getElementById('pgrid');
+for (var _i = 1; _i <= 10; _i++) {
+  (function(n) {
+    var b = document.createElement('div');
+    b.className   = 'bp';
+    b.id          = 'p' + n;
+    b.textContent = n;
+    b.onclick     = function() { setPilhas(n); };
+    pg2.appendChild(b);
+  })(_i);
+}
+
+// HELPERS
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) { return '—'; }
+  if (Number.isInteger(n)) { return n.toLocaleString('pt-BR'); }
+  return n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+}
+
+// TECLADO
+function getRaw()  { return foco === 'mult' ? sMult : foco === 'cm' ? sCm : sPed; }
+function setRaw(v) {
+  if      (foco === 'mult') { sMult = v; }
+  else if (foco === 'cm')   { sCm   = v; }
+  else                      { sPed  = v; }
+  salvar();
+}
+function inp(ch) {
+  var r = getRaw();
+  if (ch === '.' && foco === 'ped') { return; }
+  if (ch === '.') {
+    if (r.indexOf('.') >= 0) { return; }
+    if (r === '') { r = '0'; }
+  }
+  if (r === '0' && ch !== '.') { r = ch; } else { r = r + ch; }
+  setRaw(r);
+  render();
+}
+function del()    { setRaw(getRaw().slice(0, -1)); render(); }
+function limpar() { setRaw(''); render(); }
+function avancar() {
+  if (foco === 'mult' && sMult) { setFoco('cm'); }
+  render();
+}
+
+// FOCO / ABA / ATALHOS / PILHAS
+function setFoco(f) { foco = f; render(); }
+
+function setTab(t) {
+  tab = t;
+  document.getElementById('vc').classList.toggle('hidden', t !== 'calc');
+  document.getElementById('vp').classList.toggle('hidden', t !== 'pedido');
+  document.getElementById('tab-calc').className   = 'tab' + (t === 'calc'   ? ' tc' : '');
+  document.getElementById('tab-pedido').className = 'tab' + (t === 'pedido' ? ' tp' : '');
+  foco = (t === 'pedido') ? 'ped' : 'mult';
+  render();
+}
+
+function setAtalho(v) {
+  sMult = String(v);
+  document.querySelectorAll('.atalho').forEach(function(a) { a.classList.remove('sel'); });
+  var b = document.getElementById('a' + v);
+  if (b) { b.classList.add('sel'); }
+  foco = 'cm';
+  salvar();
+  render();
+}
+
+function setPilhas(n) {
+  pilhas = n;
+  document.querySelectorAll('.bp').forEach(function(b) { b.classList.remove('sel'); });
+  var b = document.getElementById('p' + n);
+  if (b) { b.classList.add('sel'); }
+  salvar();
+  render();
+}
+
+// RENDER
+function render() {
+  var mf  = parseFloat(sMult);
+  var mi  = parseInt(sMult, 10);   // inteiro — usado em calcAltura
+  var cf  = parseFloat(sCm);
+  var hm  = (sMult !== '' && !isNaN(mf) && mf > 0);
+  var hc  = (sCm   !== '' && !isNaN(cf) && cf > 0);
+  var fil = (hm && hc) ? (cf / 10) * mf : null;
+  var tot = (fil !== null && pilhas !== null) ? Math.round(fil * pilhas) : null;
+
+  // ── CALC ──
+  var fm2 = document.getElementById('fm');
+  var vm2 = document.getElementById('vm');
+  fm2.className = 'field' + (foco === 'mult' ? ' am' : '');
+  if (hm) {
+    vm2.innerHTML = fmt(mf) + (foco === 'mult' ? '<span class="cursor"></span>' : '');
+    vm2.style.color = 'var(--orange)';
+  } else {
+    vm2.innerHTML   = foco === 'mult' ? '<span class="cursor" style="color:var(--orange)"></span>' : '—';
+    vm2.style.color = 'var(--muted)';
+  }
+
+  var fc2 = document.getElementById('fc');
+  var vc3 = document.getElementById('vc2');
+  fc2.className = 'field' + (foco === 'cm' ? ' ac' : '');
+  if (hc) {
+    vc3.innerHTML   = fmt(cf) + (foco === 'cm' ? '<span class="cursor"></span>' : '');
+    vc3.style.color = 'var(--accent)';
+  } else {
+    vc3.innerHTML   = foco === 'cm' ? '<span class="cursor" style="color:var(--accent)"></span>' : '—';
+    vc3.style.color = 'var(--muted)';
+  }
+
+  document.getElementById('rfil').textContent = fmt(fil);
+  document.getElementById('rformula').textContent = (hm && hc)
+    ? (fmt(cf) + ' ÷ 10 × ' + fmt(mf) + ' = ' + fmt(fil))
+    : 'cm ÷ 10 × múltiplo';
+
+  document.getElementById('tval').textContent = tot !== null ? fmt(tot) : (fil !== null ? fmt(fil) : '—');
+  document.getElementById('tformula').textContent = tot !== null
+    ? (pilhas + ' pilha' + (pilhas > 1 ? 's' : '') + ' × ' + fmt(fil))
+    : (fil !== null ? 'selecione pilhas abaixo' : '—');
+
+  // ── PEDIDO ──
+  var pedN   = parseInt(sPed, 10);
+  var hasPed = (sPed !== '' && !isNaN(pedN) && pedN > 0);
+  var pronto = (tot !== null && fil !== null && temRef(mi));
+
+  var vped = document.getElementById('vped');
+  if (hasPed) {
+    vped.innerHTML   = fmt(pedN) + (foco === 'ped' ? '<span class="cursor"></span>' : '');
+    vped.style.color = 'var(--blue)';
+  } else {
+    vped.innerHTML   = foco === 'ped' ? '<span class="cursor" style="color:var(--blue)"></span>' : '—';
+    vped.style.color = hasPed ? 'var(--blue)' : 'var(--muted)';
+  }
+
+  var aviso  = document.getElementById('aviso');
+  var bchips = document.getElementById('bchips');
+  if (!pronto) {
+    aviso.classList.remove('hidden');
+    bchips.classList.add('hidden');
+    if (!fil)         { aviso.innerHTML = 'Configure <b>múltiplo</b> e <b>medida</b> na aba Calculadora.'; }
+    else if (!tot)    { aviso.innerHTML = 'Selecione as <b>pilhas</b> na aba Calculadora.'; }
+    else              { aviso.innerHTML = 'Use o múltiplo <b>×16</b>, <b>×26</b> ou <b>×33</b>.'; }
+  } else {
+    aviso.classList.add('hidden');
+    bchips.classList.remove('hidden');
+    document.getElementById('cimult').textContent   = mi;
+    document.getElementById('cipilhas').textContent = pilhas;
+    document.getElementById('citotal').textContent  = fmt(tot);
+  }
+
+  var lista = document.getElementById('plista');
+  var sep   = document.getElementById('sepdist');
+  var rbox  = document.getElementById('rbox');
+
+  if (!pronto || !hasPed) {
+    lista.innerHTML = '';
+    sep.classList.add('hidden');
+    rbox.classList.add('hidden');
+    return;
+  }
+
+  sep.classList.remove('hidden');
+
+  var nComp = Math.floor(pedN / tot);
+  var resto = pedN - nComp * tot;
+  var rows  = [];
+
+  for (var j = 1; j <= nComp; j++) {
+    rows.push({ n: j, ch: tot, ok: true, alt: calcAltura(tot, mi, pilhas) });
+  }
+  if (resto > 0) {
+    rows.push({ n: nComp + 1, ch: resto, ok: false, alt: calcAltura(resto, mi, pilhas) });
+  }
+
+  lista.innerHTML = rows.map(function(r) {
+    var pct = r.alt !== null ? Math.min((r.alt / 125) * 100, 100) : 0;
+    var cor = r.ok ? 'vd' : 'rx';
+    var cls = r.ok ? 'pr ok' : 'pr ult';
+    return '<div class="' + cls + '">'
+      + '<div class="pnum">' + r.n + '</div>'
+      + '<div><div class="pcv">' + fmt(r.ch) + '</div><div class="pcl">chapas</div></div>'
+      + '<div class="bw"><div class="bb"><div class="bf ' + cor + '" style="width:' + pct.toFixed(1) + '%"></div></div>'
+      + '<div class="bt">' + pct.toFixed(0) + '% de 1,25m</div></div>'
+      + '<div><div class="av ' + cor + '">' + fmtAlt(r.alt) + '</div><div class="au">altura</div></div>'
+      + '</div>';
+  }).join('');
+
+  rbox.classList.remove('hidden');
+  document.getElementById('rval').textContent = rows.length;
+  document.getElementById('rsub').textContent = nComp > 0
+    ? (nComp + ' completo' + (nComp > 1 ? 's' : '') + (resto > 0 ? ' + 1 parcial' : ''))
+    : '1 palete parcial';
+}
+
+// TECLADO FÍSICO
+document.addEventListener('keydown', function(e) {
+  if (e.key >= '0' && e.key <= '9')              { inp(e.key); }
+  else if (e.key === '.')                         { inp('.'); }
+  else if (e.key === 'Backspace')                 { del(); }
+  else if (e.key === 'Escape')                    { limpar(); }
+  else if (e.key === 'Enter' || e.key === 'Tab')  { e.preventDefault(); avancar(); }
+});
+
+// INIT
+carregar();
+if (pilhas) { var bp2 = document.getElementById('p' + pilhas); if (bp2) { bp2.classList.add('sel'); } }
+var mi2 = parseInt(sMult, 10);
+if (mi2 === 16 || mi2 === 26 || mi2 === 33) { var ba = document.getElementById('a' + mi2); if (ba) { ba.classList.add('sel'); } }
+render();
+</script>
+</body>
+</html>
