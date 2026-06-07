@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Chapas por Palete</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f0e040">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -437,6 +439,13 @@ if (pilhas) { var bp2 = document.getElementById('p' + pilhas); if (bp2) { bp2.cl
 var mi2 = parseInt(sMult, 10);
 if (mi2 === 16 || mi2 === 26 || mi2 === 33) { var ba = document.getElementById('a' + mi2); if (ba) { ba.classList.add('sel'); } }
 render();
+</script>
+  <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js');
+  });
+}
 </script>
 </body>
 </html>
