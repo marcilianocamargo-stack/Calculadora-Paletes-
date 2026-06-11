@@ -404,7 +404,22 @@ function render() {
     rows.push({ n: nComp + 1, ch: resto, ok: false, alt: calcAltura(resto, mi, pilhas) });
   }
 
-  lista.innerHTML = rows.map(function(r) {
+var vis = rows;
+  var ocultos = 0;
+  if (rows.length > 3) {
+    ocultos = rows.length - 3;
+    vis = rows.slice(-3);
+  }
+
+  var html = '';
+  if (ocultos > 0) {
+    html += '<div class="pr ok" style="grid-template-columns:1fr;text-align:center;padding:7px 12px">'
+          + '<div class="pcl" style="font-size:10px">+ ' + ocultos + ' palete' + (ocultos > 1 ? 's' : '')
+          + ' completo' + (ocultos > 1 ? 's' : '') + ' de ' + fmt(tot) + ' chapas</div>'
+          + '</div>';
+  }
+
+  html += vis.map(function(r) {
     var pct = r.alt !== null ? Math.min((r.alt / 125) * 100, 100) : 0;
     var cor = r.ok ? 'vd' : 'rx';
     var cls = r.ok ? 'pr ok' : 'pr ult';
@@ -416,6 +431,8 @@ function render() {
       + '<div><div class="av ' + cor + '">' + fmtAlt(r.alt) + '</div><div class="au">altura</div></div>'
       + '</div>';
   }).join('');
+
+  lista.innerHTML = html;
 
   rbox.classList.remove('hidden');
   document.getElementById('rval').textContent = rows.length;
