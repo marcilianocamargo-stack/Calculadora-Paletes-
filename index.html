@@ -44,8 +44,8 @@
   @keyframes blink { 50% { opacity: 0; } }
 
   .atalhos { width: 100%; max-width: 420px; display: flex; gap: 6px; margin-bottom: 10px; }
-  .atalho { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 13px; padding: 7px 0; cursor: pointer; letter-spacing: 1px; text-align: center; }
-  .atalho.sel { border-color: var(--orange); color: var(--orange); background: #1f1400; }
+.atalho { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--accent); font-family: 'DM Mono', monospace; font-size: 13px; padding: 7px 0; cursor: pointer; letter-spacing: 1px; text-align: center; }
+.atalho.sel { border-color: var(--accent); color: var(--accent); background: #1c1c00; font-weight: 500; }
 
   .strip { width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--green); padding: 8px 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
   .sl { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; line-height: 1.6; }
@@ -128,10 +128,10 @@
       <div class="fv" id="vc2" style="color:var(--muted)">—</div>
     </div>
   </div>
-  <div class="atalhos">
-    <button class="atalho" id="a16" onclick="setAtalho(16)">×16</button>
-    <button class="atalho" id="a26" onclick="setAtalho(26)">×26</button>
-    <button class="atalho" id="a33" onclick="setAtalho(33)">×33</button>
+<div class="atalhos">
+    <button class="atalho" id="a16" onclick="setAtalho(16)">BC</button>
+    <button class="atalho" id="a26" onclick="setAtalho(26)">Onda C</button>
+    <button class="atalho" id="a33" onclick="setAtalho(33)">Onda B</button>
   </div>
   <div class="strip">
     <div><div class="sl">chapas / fileira</div><div class="sl" id="rformula">cm ÷ 10 × múltiplo</div></div>
